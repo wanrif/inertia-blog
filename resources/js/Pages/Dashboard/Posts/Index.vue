@@ -5,7 +5,7 @@ import { ref, watch } from "vue";
 import { truncate, debounce } from "lodash";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
-import DeleteModal from "@/Components/SlideDownModal.vue";
+import DeleteModal from "@/Components/DeleteModal.vue";
 import ToastNotification from "@/Components/ToastNotification.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 
@@ -101,7 +101,7 @@ const closeModal = () => {
                                 </button>
                             </div>
                             <Link
-                                :href="route('posts.create')"
+                                :href="route('dashboard.posts.create')"
                                 class="px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-indigo-600 rounded-lg shadow-md w-52 hover:bg-teal-600 focus:ring-teal-500 focus:ring-offset-teal-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
                             >
                                 Create Post
@@ -140,7 +140,7 @@ const closeModal = () => {
                                                         scope="col"
                                                         class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-200"
                                                     >
-                                                        Created
+                                                        Created at
                                                     </th>
                                                     <th
                                                         scope="col"
@@ -182,7 +182,7 @@ const closeModal = () => {
                                                             class="flex items-center justify-center gap-1 px-2 py-1 text-sm font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                                             :href="
                                                                 route(
-                                                                    'posts.show',
+                                                                    'dashboard.posts.show',
                                                                     post
                                                                 )
                                                             "
@@ -205,7 +205,7 @@ const closeModal = () => {
                                                             class="flex items-center justify-center gap-1 px-2 py-1 text-sm font-semibold text-white transition-all bg-teal-500 border border-transparent rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                                             :href="
                                                                 route(
-                                                                    'posts.edit',
+                                                                    'dashboard.posts.edit',
                                                                     post
                                                                 )
                                                             "

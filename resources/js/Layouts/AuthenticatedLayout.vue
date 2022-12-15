@@ -1,25 +1,17 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/inertia-vue3";
+import { Link, usePage } from "@inertiajs/inertia-vue3";
 
 const showingNavigationDropdown = ref(false);
 
-// onMounted(() => {
-//     if (
-//         localStorage.getItem("theme") === "dark" ||
-//         (!("theme" in localStorage) &&
-//             window.matchMedia("(prefers-color-scheme: dark)").matches)
-//     ) {
-//         document.documentElement.classList.add("dark");
-//     } else {
-//         document.documentElement.classList.remove("dark");
-//     }
-// });
+const user = computed(() => {
+    return usePage().props.value.auth.user;
+});
 
 function theme() {
     if (localStorage.getItem("theme")) {
@@ -74,10 +66,32 @@ function theme() {
                                     Dashboard
                                 </NavLink>
                                 <NavLink
-                                    :href="route('posts.index')"
-                                    :active="route().current('posts.*')"
+                                    :href="route('dashboard.posts.index')"
+                                    :active="
+                                        route().current('dashboard.posts.*')
+                                    "
                                 >
                                     Posts
+                                </NavLink>
+                                <NavLink v-if="user.role === 'admin'">
+                                    Categories
+                                </NavLink>
+                                <NavLink v-if="user.role === 'admin'">
+                                    User
+                                </NavLink>
+                                <NavLink
+                                    v-if="user.role === 'admin'"
+                                    :href="route('roles.index')"
+                                    :active="route().current('roles.*')"
+                                >
+                                    Roles
+                                </NavLink>
+                                <NavLink
+                                    v-if="user.role === 'admin'"
+                                    :href="route('permissions.index')"
+                                    :active="route().current('permissions.*')"
+                                >
+                                    Permissions
                                 </NavLink>
                             </div>
                         </div>
@@ -131,10 +145,7 @@ function theme() {
                                                 type="button"
                                                 class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md dark:text-gray-200 dark:bg-gray-800 hover:text-gray-700 focus:outline-none"
                                             >
-                                                {{
-                                                    $page.props.auth.user
-                                                        .username
-                                                }}
+                                                {{ user.username }}
 
                                                 <svg
                                                     class="ml-2 -mr-0.5 h-4 w-4"

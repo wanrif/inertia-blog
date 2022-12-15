@@ -1,30 +1,30 @@
 <script setup>
 import axios from "axios";
 import { ref } from "vue";
-import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
 import SubmitButton from "@/Components/SubmitButton.vue";
+import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import ProcessingIcon from "@/Components/Icons/ProcessingIcon.vue";
 
-const props = defineProps({
-    post: Object,
-});
-
+/**
+ * Form Helpers
+ * @type {import("@inertiajs/inertia-vue3").Form}
+ * @see https://inertiajs.com/forms#form-helper
+ */
 const form = useForm({
-    _method: "PUT",
-    title: props.post.title,
-    slug: props.post.slug,
-    image: props.post.image,
-    body: props.post.body,
+    title: null,
+    slug: null,
+    image: null,
+    body: null,
 });
 
 /**
  * Slugify the title
  */
-const titleField = () => {
+function titleField() {
     if (form.title) {
         // fetch("/dashboard/posts/getSlug?title=" + form.title)
         //     .then((response) => response.json())
@@ -39,7 +39,7 @@ const titleField = () => {
     } else {
         form.reset("slug");
     }
-};
+}
 
 /**
  * Image Upload
@@ -47,7 +47,7 @@ const titleField = () => {
  * onRemove: Reset the form image and the input file
  */
 const urlImage = ref(null);
-const imageField = () => {
+function imageField() {
     return {
         onChange: (event) => {
             const file = event.target.files[0];
@@ -64,20 +64,23 @@ const imageField = () => {
             urlImage.value = null;
         },
     };
-};
+}
 
 /**
- * Update Form
+ * Submit Form
  */
-const update = () => {
-    form.post(route("posts.update", props.post.slug), {
-        preserveState: true,
+function submit() {
+    form.post(route("dashboard.posts.store"), {
+        onSuccess: () => {
+            form.reset();
+            urlImage.value = null;
+        },
     });
-};
+}
 </script>
 
 <template>
-    <Head title="Edit Post" />
+    <Head title="Create Post" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -85,7 +88,7 @@ const update = () => {
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
                 <Link :href="route('posts.index')">Posts</Link>
-                <span class="text-indigo-500"> / Edit</span>
+                <span class="text-indigo-500"> / Create</span>
             </div>
         </template>
 
@@ -93,7 +96,7 @@ const update = () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <form @submit.prevent="update">
+                        <form @submit.prevent="submit">
                             <div class="grid grid-cols-2 gap-3 mb-3">
                                 <!-- TITLE -->
                                 <div
@@ -111,7 +114,7 @@ const update = () => {
                                         :class="'ring-red-500' +
                                             (form.errors.title ? ' ring-2' : '')
                                         "
-                                        @change="titleField"
+                                        @change="titleField()"
                                         v-model="form.title"
                                         placeholder="Title"
                                         required
@@ -140,7 +143,7 @@ const update = () => {
                                         "
                                         v-model="form.slug"
                                         placeholder="Slug"
-                                        disabled=""
+                                        disabled
                                         required
                                     />
                                     <InputError
@@ -171,7 +174,7 @@ const update = () => {
                                             />
                                         </label>
                                         <button
-                                            v-if="urlImage || form.post.image"
+                                            v-if="urlImage"
                                             @click="imageField().onRemove"
                                             type="button"
                                             class="p-1 transition duration-200 ease-in rounded-full hover:bg-slate-300"
@@ -193,10 +196,8 @@ const update = () => {
                                         </button>
                                     </div>
                                     <img
-                                        v-if="urlImage || post.image"
-                                        :src="
-                                            urlImage || '/storage/' + post.image
-                                        "
+                                        v-if="urlImage"
+                                        :src="urlImage"
                                         class="w-full mt-4 h-80"
                                     />
                                     <div
@@ -219,7 +220,6 @@ const update = () => {
                                         contentType="html"
                                         id="on-error-body"
                                         theme="snow"
-                                        required
                                     />
                                     <div
                                         v-if="form.errors.body"
@@ -242,7 +242,7 @@ const update = () => {
                                 {{
                                     form.processing
                                         ? "Processing..."
-                                        : "Update Post"
+                                        : "Create Post"
                                 }}
                             </SubmitButton>
                         </form>

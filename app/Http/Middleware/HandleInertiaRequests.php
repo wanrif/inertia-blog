@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => Auth::user() ? [
                 'user' => [
                     'username' => Auth::user()->name,
+                    'role' => Auth::user()->getRoleNames()[0],
                 ]
             ] : null,
             'ziggy' => function () use ($request) {

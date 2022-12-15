@@ -1,6 +1,5 @@
 <script setup>
 import { useForm } from "@inertiajs/inertia-vue3";
-import { ref } from "vue";
 
 const props = defineProps({
     title: String,
@@ -16,7 +15,7 @@ HSOverlay.on("close", () => {
 
 const form = useForm();
 function deletePost(slug) {
-    form.delete(route("posts.destroy", slug), {
+    form.delete(route("dashboard.posts.destroy", slug), {
         preserveState: true,
     });
 }

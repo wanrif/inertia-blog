@@ -33,7 +33,7 @@ class DashboardPostController extends Controller
             'created_at' => $post->created_at->diffForHumans(),
         ]);
 
-        return Inertia::render('Posts/Index', [
+        return Inertia::render('Dashboard/Posts/Index', [
             'posts' => $data,
             'filters' => request()->only(['search']),
         ]);
@@ -46,7 +46,7 @@ class DashboardPostController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Posts/Create');
+        return Inertia::render('Dashboard/Posts/Create');
     }
 
     /**
@@ -79,7 +79,7 @@ class DashboardPostController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        return to_route('posts.index')->with('message', 'Post created successfully.');
+        return to_route('dashboard.posts.index')->with('message', 'Post created successfully.');
     }
 
     /**
@@ -90,7 +90,7 @@ class DashboardPostController extends Controller
      */
     public function show(Post $post)
     {
-        return Inertia::render('Posts/Show', [
+        return Inertia::render('Dashboard/Posts/Show', [
             'post' => [
                 'title' => $post->title,
                 'body' => $post->body,
@@ -109,7 +109,7 @@ class DashboardPostController extends Controller
      */
     public function edit(Post $post)
     {
-        return Inertia::render('Posts/Edit', [
+        return Inertia::render('Dashboard/Posts/Edit', [
             'post' => [
                 'id' => $post->id,
                 'title' => $post->title,
@@ -156,7 +156,7 @@ class DashboardPostController extends Controller
             'body' => $request->body,
         ]);
 
-        return to_route('posts.index')->with('message', 'Post updated successfully.');
+        return to_route('dashboard.posts.index')->with('message', 'Post updated successfully.');
     }
 
     /**

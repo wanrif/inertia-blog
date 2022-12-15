@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\PermissionsResourceController;
+use App\Http\Controllers\Admin\RoleController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\DashboardPostController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +42,24 @@ Route::get('/dashboard', function () {
 require __DIR__.'/auth.php';
 
 /**
- * * Posts Routes
+ * * Dashboard Posts Routes
  */
 Route::get('/dashboard/posts/getSlug', [DashboardPostController::class, 'getSlug'])->middleware(['auth', 'verified']);
-Route::resource('dashboard/posts', DashboardPostController::class)->middleware(['auth', 'verified']);
+Route::resource('dashboard/posts', DashboardPostController::class, [
+    'as' => 'dashboard'
+])->middleware(['auth', 'verified']);
+
+/**
+ * * Dashboard Roles Routes
+ */
+Route::resource('dashboard/roles', RoleController::class)->middleware(['auth', 'verified', 'role:admin']);
+
+/**
+ * * Dashboard Permissions Routes
+ */
+Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:admin']);
+
+/**
+ * * Post Routes
+ */
+Route::resource('posts', PostController::class)->except(['create', 'edit', 'update', 'destroy']);
