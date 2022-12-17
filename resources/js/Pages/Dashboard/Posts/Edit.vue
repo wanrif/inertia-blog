@@ -84,7 +84,7 @@ const update = () => {
             <div
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
-                <Link :href="route('posts.index')">Posts</Link>
+                <Link :href="route('dashboard.posts.index')">Posts</Link>
                 <span class="text-indigo-500"> / Edit</span>
             </div>
         </template>

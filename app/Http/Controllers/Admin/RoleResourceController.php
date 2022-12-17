@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Role;
 use Inertia\Inertia;
 use App\Models\Permission;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
-class RoleController extends Controller
+class RoleResourceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,20 +19,24 @@ class RoleController extends Controller
      */
     public function index()
     {
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
+
         $data = Role::query()
         ->filter(request()->only('search'))
-        ->latest()
+        ->orderBy('name')
         ->paginate(5)
         ->withQueryString()
         ->through(fn ($role) => [
             'id' => $role->id,
             'name' => $role->name,
-            'guard_name' => $role->guard_name,
+            'permissions' => $role->permissions->pluck('name')->toArray(),
             'created_at' => $role->created_at->isoFormat('dddd, D MMMM Y'),
             'updated_at' => $role->updated_at->isoFormat('dddd, D MMMM Y'),
         ]);
+
         return Inertia::render('Dashboard/Roles/Index', [
             'roles' => $data,
+            'filters' => request()->only('search'),
         ]);
     }
 
@@ -41,6 +47,8 @@ class RoleController extends Controller
      */
     public function create()
     {
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
+
         return Inertia::render('Dashboard/Roles/Create', [
             'permissions' => Permission::query()->select(['name','id'])->get(),
         ]);
@@ -54,12 +62,14 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to add roles');
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
         $role = Role::create([
-            'name' => strtolower($request->name),
+            'name' => Str::slug($request->name),
             'guard_name' => 'web',
         ]);
 
@@ -112,6 +122,18 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to delete roles');
+
+        if($role->name === 'super-admin') {
+            return back()->with('error', 'You can not delete super admin role');
+        }
+
+        if($role->name === 'admin') {
+            return back()->with('error', 'You can not delete admin role');
+        }
+
+        $role->delete();
+
+        return back()->with('message', 'Role deleted successfully');
     }
 }

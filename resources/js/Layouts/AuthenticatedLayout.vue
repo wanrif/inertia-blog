@@ -9,9 +9,7 @@ import { Link, usePage } from "@inertiajs/inertia-vue3";
 
 const showingNavigationDropdown = ref(false);
 
-const user = computed(() => {
-    return usePage().props.value.auth.user;
-});
+const user = computed(() => usePage().props.value.auth.user);
 
 function theme() {
     if (localStorage.getItem("theme")) {
@@ -73,21 +71,37 @@ function theme() {
                                 >
                                     Posts
                                 </NavLink>
-                                <NavLink v-if="user.role === 'admin'">
+                                <NavLink
+                                    v-if="
+                                        user.role === 'super-admin' ||
+                                        user.role === 'admin'
+                                    "
+                                >
                                     Categories
                                 </NavLink>
-                                <NavLink v-if="user.role === 'admin'">
+                                <NavLink
+                                    v-if="
+                                        user.role === 'super-admin' ||
+                                        user.role === 'admin'
+                                    "
+                                >
                                     User
                                 </NavLink>
                                 <NavLink
-                                    v-if="user.role === 'admin'"
+                                    v-if="
+                                        user.role === 'super-admin' ||
+                                        user.role === 'admin'
+                                    "
                                     :href="route('roles.index')"
                                     :active="route().current('roles.*')"
                                 >
                                     Roles
                                 </NavLink>
                                 <NavLink
-                                    v-if="user.role === 'admin'"
+                                    v-if="
+                                        user.role === 'super-admin' ||
+                                        user.role === 'admin'
+                                    "
                                     :href="route('permissions.index')"
                                     :active="route().current('permissions.*')"
                                 >
@@ -233,6 +247,48 @@ function theme() {
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('dashboard.posts.index')"
+                            :active="route().current('dashboard.posts.*')"
+                        >
+                            Posts
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="
+                                user.role === 'super-admin' ||
+                                user.role === 'admin'
+                            "
+                        >
+                            Categories
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="
+                                user.role === 'super-admin' ||
+                                user.role === 'admin'
+                            "
+                        >
+                            User
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="
+                                user.role === 'super-admin' ||
+                                user.role === 'admin'
+                            "
+                            :href="route('roles.index')"
+                            :active="route().current('roles.*')"
+                        >
+                            Roles
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="
+                                user.role === 'super-admin' ||
+                                user.role === 'admin'
+                            "
+                            :href="route('permissions.index')"
+                            :active="route().current('permissions.*')"
+                        >
+                            Permissions
                         </ResponsiveNavLink>
                     </div>
 

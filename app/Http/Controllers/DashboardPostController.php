@@ -18,20 +18,40 @@ class DashboardPostController extends Controller
      */
     public function index()
     {
-        $data = Post::query()
-        ->with('author')
-        ->when(request('search'), fn ($query, $search) =>
-        $query->where('title', 'like', "%{$search}%"))
-        ->latest()
-        ->paginate(10)
-        ->withQueryString()
-        ->through(fn ($post) => [
-            'id' => $post->id,
-            'title' => $post->title,
-            'slug' => $post->slug,
-            'author' => $post->author->name,
-            'created_at' => $post->created_at->diffForHumans(),
-        ]);
+        if(auth()->user()->hasRole('author')) {
+            $data = Post::query()
+            ->with('author')
+            ->where('user_id', auth()->user()->id)
+            ->when(request('search'), fn ($query, $search) =>
+            $query->where('title', 'like', "%{$search}%"))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn ($post) => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'author' => $post->author->name,
+                'created_at' => $post->created_at->diffForHumans(),
+            ]);
+        }
+
+        if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin')) {
+            $data = Post::query()
+            ->with('author')
+            ->when(request('search'), fn ($query, $search) =>
+            $query->where('title', 'like', "%{$search}%"))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn ($post) => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'author' => $post->author->name,
+                'created_at' => $post->created_at->diffForHumans(),
+            ]);
+        }
 
         return Inertia::render('Dashboard/Posts/Index', [
             'posts' => $data,
@@ -90,6 +110,9 @@ class DashboardPostController extends Controller
      */
     public function show(Post $post)
     {
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        403, 'You are not authorized to view this post.');
+
         return Inertia::render('Dashboard/Posts/Show', [
             'post' => [
                 'title' => $post->title,
@@ -109,6 +132,9 @@ class DashboardPostController extends Controller
      */
     public function edit(Post $post)
     {
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        403, 'You are not authorized to edit this post.');
+
         return Inertia::render('Dashboard/Posts/Edit', [
             'post' => [
                 'id' => $post->id,
@@ -129,6 +155,9 @@ class DashboardPostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        403, 'You are not authorized to update this post.');
+
         $request->validate([
             'title' => ['required', 'max:255'],
             'body' => ['required', 'min:10'],
@@ -140,12 +169,14 @@ class DashboardPostController extends Controller
             ]);
         }
 
-        $postImage = $post->image;
+        $postImage = '';
         if ($request->file('image')) {
             $request->validate([
                 'image' => ['image', 'max:1024', 'mimes:jpg,jpeg,png'],
             ]);
-            Storage::delete($post->image);
+            if ($post->image) {
+                Storage::delete($post->image);
+            }
             $postImage = $request->file('image')->store('post-images');
         }
 
@@ -167,14 +198,15 @@ class DashboardPostController extends Controller
      */
     public function destroy(Post $post)
     {
-        // abort_if($post->user_id !== auth()->user()->id, 403, 'You are not authorized to delete this post.');
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        403, 'You are not authorized to delete this post.');
 
-        Storage::delete($post->image);
+        if ($post->image) {
+            Storage::delete($post->image);
+        }
         $post->delete();
 
-        if ($post) {
-            return redirect()->back()->with('message', 'Post deleted successfully.');
-        }
+        return redirect()->back()->with('message', 'Post deleted successfully.');
     }
 
     /**

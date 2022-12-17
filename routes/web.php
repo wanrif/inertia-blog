@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\PermissionsResourceController;
-use App\Http\Controllers\Admin\RoleController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\DashboardPostController;
+use App\Http\Controllers\Admin\PermissionsResourceController;
+use App\Http\Controllers\Admin\RoleResourceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,21 +45,19 @@ require __DIR__.'/auth.php';
  * * Dashboard Posts Routes
  */
 Route::get('/dashboard/posts/getSlug', [DashboardPostController::class, 'getSlug'])->middleware(['auth', 'verified']);
-Route::resource('dashboard/posts', DashboardPostController::class, [
-    'as' => 'dashboard'
-])->middleware(['auth', 'verified']);
+Route::resource('dashboard/posts', DashboardPostController::class, ['as' => 'dashboard'])->middleware(['auth', 'verified']);
 
 /**
  * * Dashboard Roles Routes
  */
-Route::resource('dashboard/roles', RoleController::class)->middleware(['auth', 'verified', 'role:admin']);
+Route::resource('dashboard/roles', RoleResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin']);
 
 /**
  * * Dashboard Permissions Routes
  */
-Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:admin']);
+Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin']);
 
 /**
  * * Post Routes
  */
-Route::resource('posts', PostController::class)->except(['create', 'edit', 'update', 'destroy']);
+// Route::resource('posts', PostController::class)->except(['create', 'edit', 'update', 'destroy']);

@@ -12,7 +12,15 @@ let removeFinishEventListener = Inertia.on("finish", () => {
     if (page.props.value.toast.message) {
         toastStore.add({
             key: nanoid(6),
+            type: "success",
             message: page.props.value.toast.message,
+        });
+    }
+    if (page.props.value.toast.error) {
+        toastStore.add({
+            key: nanoid(6),
+            type: "error",
+            message: page.props.value.toast.error,
         });
     }
 });
@@ -29,6 +37,7 @@ onUnmounted(() => removeFinishEventListener());
         <ToastItem
             v-for="(item, index) in toastStore.items"
             :key="item.key"
+            :type="item.type"
             :message="item.message"
             :duration="3000"
             @remove="toastStore.remove(index)"

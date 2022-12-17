@@ -6,7 +6,7 @@
             <div
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
-                <Link :href="route('posts.index')">Posts</Link>
+                <Link :href="route('dashboard.posts.index')">Posts</Link>
                 <span class="text-indigo-500"> / Show</span>
             </div>
         </template>
@@ -17,18 +17,20 @@
                     <div
                         class="max-w-2xl overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800"
                     >
-                        <img
-                            v-if="post.image.includes('post-images')"
-                            :src="`/storage/${post.image}`"
-                            class="object-cover w-full"
-                            alt="Post Image"
-                        />
-                        <img
-                            v-else-if="post.image.includes('https')"
-                            :src="post.image"
-                            class="object-cover w-full h-64"
-                            alt="Post Image"
-                        />
+                        <div v-if="post.image !== null">
+                            <img
+                                v-if="post.image.includes('post-images')"
+                                :src="`/storage/${post.image}`"
+                                class="object-cover w-full"
+                                alt="Post Image"
+                            />
+                            <img
+                                v-else-if="post.image.includes('https')"
+                                :src="post.image"
+                                class="object-cover w-full h-64"
+                                alt="Post Image"
+                            />
+                        </div>
                         <img
                             v-else
                             class="object-cover w-full"

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignUlid('user_id');
             $table->string('title');
             $table->string('slug');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->text('body');
             $table->timestamps();
         });

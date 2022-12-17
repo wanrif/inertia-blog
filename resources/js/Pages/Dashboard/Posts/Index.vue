@@ -5,9 +5,10 @@ import { ref, watch } from "vue";
 import { truncate, debounce } from "lodash";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
-import DeleteModal from "@/Components/DeleteModal.vue";
+import DeleteModal from "@/Components/Post/DeleteModal.vue";
 import ToastNotification from "@/Components/ToastNotification.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
+import TableButton from "@/Components/TableButton.vue";
 
 // TODO: Create edit post
 
@@ -25,7 +26,7 @@ watch(
     search,
     debounce((value) => {
         Inertia.get(
-            route("posts.index"),
+            route("dashboard.posts.index"),
             { search: value },
             {
                 preserveState: true,
@@ -46,16 +47,16 @@ const reset = () => {
  * Delete post
  * @param {string} slug
  */
-const datas = ref({
+const data = ref({
     slugs: null,
 });
 
 function openModal(slug) {
-    datas.value.slugs = slug;
+    data.value.slugs = slug;
 }
 
 const closeModal = () => {
-    datas.value.slugs = null;
+    data.value.slugs = null;
 };
 </script>
 
@@ -179,7 +180,6 @@ const closeModal = () => {
                                                         class="flex items-center float-right px-6 py-4 space-x-2 text-sm font-medium text-right whitespace-nowrap"
                                                     >
                                                         <Link
-                                                            class="flex items-center justify-center gap-1 px-2 py-1 text-sm font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                                             :href="
                                                                 route(
                                                                     'dashboard.posts.show',
@@ -187,22 +187,12 @@ const closeModal = () => {
                                                                 )
                                                             "
                                                         >
-                                                            Detail
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                viewBox="0 0 24 24"
-                                                                fill="currentColor"
-                                                                class="w-4 h-4"
-                                                            >
-                                                                <path
-                                                                    fill-rule="evenodd"
-                                                                    d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"
-                                                                    clip-rule="evenodd"
-                                                                />
-                                                            </svg>
+                                                            <TableButton
+                                                                value="Detail"
+                                                                typeButton="btnDetail"
+                                                            />
                                                         </Link>
                                                         <Link
-                                                            class="flex items-center justify-center gap-1 px-2 py-1 text-sm font-semibold text-white transition-all bg-teal-500 border border-transparent rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                                             :href="
                                                                 route(
                                                                     'dashboard.posts.edit',
@@ -210,45 +200,22 @@ const closeModal = () => {
                                                                 )
                                                             "
                                                         >
-                                                            Edit
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                viewBox="0 0 24 24"
-                                                                fill="currentColor"
-                                                                class="w-4 h-4"
-                                                            >
-                                                                <path
-                                                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"
-                                                                />
-                                                                <path
-                                                                    d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"
-                                                                />
-                                                            </svg>
+                                                            <TableButton
+                                                                value="Edit"
+                                                                typeButton="btnEdit"
+                                                            />
                                                         </Link>
-                                                        <button
+                                                        <TableButton
                                                             @click="
                                                                 openModal(
                                                                     post.slug
                                                                 )
                                                             "
                                                             type="button"
-                                                            class="flex items-center justify-center gap-1 px-2 py-1 text-sm font-semibold text-white transition-all border border-transparent rounded-md hover:bg-rose-600 focus:outline-none focus:ring-2 bg-rose-500 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                                            value="Delete"
+                                                            typeButton="btnDelete"
                                                             data-hs-overlay="#delete-modal"
-                                                        >
-                                                            Delete
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                viewBox="0 0 20 20"
-                                                                fill="currentColor"
-                                                                class="w-4 h-4"
-                                                            >
-                                                                <path
-                                                                    fill-rule="evenodd"
-                                                                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
-                                                                    clip-rule="evenodd"
-                                                                />
-                                                            </svg>
-                                                        </button>
+                                                        />
                                                     </td>
                                                 </tr>
                                                 <tr v-else>
@@ -262,7 +229,7 @@ const closeModal = () => {
                                                 <DeleteModal
                                                     title="Delete Post"
                                                     body="Are you sure you want to delete this post?"
-                                                    :slug="datas.slugs || null"
+                                                    :slug="data.slugs || null"
                                                     @closeModal="closeModal"
                                                 />
                                             </tbody>
