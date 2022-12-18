@@ -144,12 +144,8 @@ class RoleResourceController extends Controller
     {
         abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to delete roles');
 
-        if($role->name === 'super-admin') {
-            return back()->with('error', 'You can not delete super admin role');
-        }
-
-        if($role->name === 'admin') {
-            return back()->with('error', 'You can not delete admin role');
+        if($role->name === 'super-admin' || $role->name === 'admin') {
+            return back()->with('error', 'You can not delete "' . $role->name . '" role');
         }
 
         $role->delete();
