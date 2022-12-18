@@ -57,7 +57,7 @@ Route::resource('dashboard/roles', RoleResourceController::class)->middleware(['
 /**
  * * Dashboard Permissions Routes
  */
-Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin']);
+Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin'])->except(['show', 'edit']);
 
 /**
  * * Post Routes
