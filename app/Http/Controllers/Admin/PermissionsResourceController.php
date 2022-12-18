@@ -27,6 +27,7 @@ class PermissionsResourceController extends Controller
                         'id' => $permission->id,
                         'name' => $permission->name,
                         'created_at' => $permission->created_at->format('d/m/Y'),
+                        'updated_at' => $permission->updated_at->format('d/m/Y'),
                     ]),
             'filters' => request()->only('search'),
         ]);
@@ -92,7 +93,17 @@ class PermissionsResourceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $permission = Permission::findOrFail($id);
+
+        $permission->update([
+            'name' => strtolower($request->name),
+        ]);
+
+        return to_route('permissions.index')->with('message', 'Permission has been updated.');
     }
 
     /**
@@ -103,6 +114,14 @@ class PermissionsResourceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $permission = Permission::findOrFail($id);
+
+        if ($permission->name == 'can manage roles' || $permission->name == 'can manage permissions') {
+            return to_route('permissions.index')->with('error', 'You can not delete "' . $permission->name . '" permission.');
+        }
+
+        $permission->delete();
+
+        return to_route('permissions.index')->with('message', 'Permission has been deleted.');
     }
 }
