@@ -19,8 +19,6 @@ class RoleResourceController extends Controller
      */
     public function index()
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
-
         $data = Role::query()
         ->filter(request()->only('search'))
         ->orderBy('name')
@@ -47,8 +45,6 @@ class RoleResourceController extends Controller
      */
     public function create()
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
-
         return Inertia::render('Dashboard/Roles/Create', [
             'permissions' => Permission::query()->select(['name','id'])->get(),
         ]);
@@ -62,8 +58,6 @@ class RoleResourceController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to add roles');
-
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -99,8 +93,6 @@ class RoleResourceController extends Controller
      */
     public function edit(Role $role)
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
-
         return Inertia::render('Dashboard/Roles/Edit', [
             'role' => $role,
             'rolePermissions' => $role->permissions->pluck('id')->toArray(),
@@ -117,8 +109,6 @@ class RoleResourceController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to update roles');
-
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -142,14 +132,14 @@ class RoleResourceController extends Controller
      */
     public function destroy(Role $role)
     {
-        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to delete roles');
-
-        if($role->name === 'super-admin' || $role->name === 'admin') {
+        if(in_array($role->name, ['super-admin', 'admin'])) {
             return back()->with('error', 'You can not delete "' . $role->name . '" role');
         }
 
-        $role->delete();
+        if($role->delete()){
+            return back()->with('message', 'Role deleted successfully');
+        }
 
-        return back()->with('message', 'Role deleted successfully');
+        return back()->with('error', 'Something went wrong, please try again.');
     }
 }

@@ -116,12 +116,14 @@ class PermissionsResourceController extends Controller
     {
         $permission = Permission::findOrFail($id);
 
-        if ($permission->name == 'can manage roles' || $permission->name == 'can manage permissions') {
-            return to_route('permissions.index')->with('error', 'You can not delete "' . $permission->name . '" permission.');
+        if (in_array($permission->name, ['can manage roles', 'can manage permissions'])) {
+            return back()->with('error', 'You can not delete "' . $permission->name . '" permission.');
         }
 
-        $permission->delete();
+        if ($permission->delete()) {
+            return back()->with('message', 'Permission has been deleted.');
+        }
 
-        return to_route('permissions.index')->with('message', 'Permission has been deleted.');
+        return back()->with('error', 'Something went wrong, please try again.');
     }
 }
