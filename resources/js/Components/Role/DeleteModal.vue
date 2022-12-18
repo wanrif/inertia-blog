@@ -35,9 +35,13 @@ const closeModal = () => {
     emit("close");
 };
 
-const deleteRole = (role) => {
-    form.delete(route("roles.destroy", role));
-    closeModal();
+const submit = () => {
+    form.delete(route("roles.destroy", props.roleId), {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeModal();
+        },
+    });
 };
 </script>
 
@@ -83,7 +87,7 @@ const deleteRole = (role) => {
                                 <button
                                     :disabled="form.processing"
                                     :class="form.processing ? '' : ''"
-                                    @click.prevent="deleteRole(form.roleId)"
+                                    @click.prevent="submit"
                                     type="button"
                                     class="flex items-center justify-center w-full px-4 py-2 text-base font-semibold text-center text-gray-200 transition-all bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                 >
