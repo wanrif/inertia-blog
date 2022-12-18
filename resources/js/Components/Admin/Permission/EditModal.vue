@@ -68,19 +68,21 @@ const update = () => {
                     >
                         <div>
                             <h3
-                                class="text-2xl font-bold border-b-4 dark:border-indigo-600"
+                                class="text-2xl font-bold border-b-4 border-indigo-600"
                             >
                                 {{ props.title }}
                             </h3>
                         </div>
                         <button
                             @click="closeModal"
-                            class="p-2 text-gray-700 transition duration-150 ease-in-out rounded-full hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                            class="p-2 text-gray-700 transition duration-150 ease-in-out rounded-full hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700"
                         >
                             Close
                         </button>
                     </div>
-                    <div class="text-center bg-indigo-600 rounded">
+                    <div
+                        class="text-center text-gray-100 bg-indigo-600 rounded"
+                    >
                         {{ props.content.name }}
                     </div>
                     <div class="flex flex-col my-3">

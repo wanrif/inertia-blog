@@ -70,7 +70,7 @@ const submit = () => {
                                 {{ props.title }}
                             </p>
                             <p
-                                class="px-6 py-2 text-xs text-gray-600 dark:text-gray-400"
+                                class="px-6 py-2 text-sm text-gray-600 dark:text-gray-400"
                             >
                                 {{ props.body }}
                             </p>
@@ -80,7 +80,7 @@ const submit = () => {
                                 <button
                                     @click="closeModal"
                                     type="button"
-                                    class="w-full px-4 py-2 text-base font-semibold text-center text-white transition-all bg-white rounded-lg shadow-md dark:text-indigo-500 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500"
+                                    class="w-full px-4 py-2 text-base font-semibold text-center transition-all bg-white border rounded-lg shadow-md dark:text-indigo-500 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-indigo-500"
                                 >
                                     Cancel
                                 </button>

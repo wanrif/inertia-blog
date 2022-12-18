@@ -22,7 +22,13 @@ const emit = defineEmits(["remove"]);
 
 <template>
     <div
-        class="bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700"
+        :class="{
+            'dark:bg-rose-700/25 border-rose-500 dark:border-rose-700':
+                props.type === 'error',
+            'dark:bg-green-700/25 border-green-500 dark:border-green-700':
+                props.type === 'success',
+        }"
+        class="bg-white border-2 rounded-md shadow-lg"
         role="alert"
     >
         <div class="flex items-center justify-between p-4">
@@ -55,7 +61,7 @@ const emit = defineEmits(["remove"]);
                     </svg>
                 </div>
                 <div class="ml-3">
-                    <p class="text-sm text-gray-700 dark:text-gray-400">
+                    <p class="text-sm text-gray-700 dark:text-gray-200">
                         {{ props.message }}
                     </p>
                 </div>
@@ -63,7 +69,7 @@ const emit = defineEmits(["remove"]);
             <button
                 @click="emit('remove')"
                 type="button"
-                class="p-1 transition ease-in bg-white rounded-lg dark:bg-gray-800 dark:hover:bg-gray-700"
+                class="p-1 transition ease-in bg-white rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
                 <CloseIcon />
             </button>
