@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 import { useForm } from "@inertiajs/inertia-vue3";
-import TrashIcon from "../Icons/TrashIcon.vue";
-import ProcessingIcon from "../Icons/ProcessingIcon.vue";
+import TrashIcon from "@/Components/Icons/TrashIcon.vue";
+import ProcessingIcon from "@/Components/Icons/ProcessingIcon.vue";
 
 const props = defineProps({
     title: {
