@@ -187,13 +187,13 @@ const deleteModal = (role) => {
                                                             typeButton="btnEdit"
                                                         />
                                                         <TableButton
-                                                            value="Delete"
-                                                            typeButton="btnDelete"
                                                             @click="
                                                                 deleteModal(
                                                                     role.id
                                                                 )
                                                             "
+                                                            value="Delete"
+                                                            typeButton="btnDelete"
                                                         />
                                                     </td>
                                                 </tr>

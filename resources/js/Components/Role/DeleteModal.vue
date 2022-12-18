@@ -2,6 +2,7 @@
 import { ref, watchEffect } from "vue";
 import { useForm } from "@inertiajs/inertia-vue3";
 import TrashIcon from "../Icons/TrashIcon.vue";
+import ProcessingIcon from "../Icons/ProcessingIcon.vue";
 
 const props = defineProps({
     title: {
@@ -80,11 +81,17 @@ const deleteRole = (role) => {
                                     Cancel
                                 </button>
                                 <button
+                                    :disabled="form.processing"
+                                    :class="form.processing ? '' : ''"
                                     @click.prevent="deleteRole(form.roleId)"
                                     type="button"
-                                    class="w-full px-4 py-2 text-base font-semibold text-center text-gray-200 transition-all bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                    class="flex items-center justify-center w-full px-4 py-2 text-base font-semibold text-center text-gray-200 transition-all bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                                 >
-                                    Delete
+                                    <ProcessingIcon
+                                        classes="h-6 w-6"
+                                        v-if="form.processing"
+                                    />
+                                    {{ form.processing ? "" : "Delete" }}
                                 </button>
                             </div>
                         </div>

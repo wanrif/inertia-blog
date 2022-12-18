@@ -67,7 +67,6 @@ const submit = () => {
                                         "
                                         v-model="form.name"
                                         placeholder="Role Name"
-                                        required
                                     />
                                     <InputError
                                         class="mt-2"
