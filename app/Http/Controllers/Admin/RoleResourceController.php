@@ -99,7 +99,13 @@ class RoleResourceController extends Controller
      */
     public function edit(Role $role)
     {
-        //
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not authorized to access this page');
+
+        return Inertia::render('Dashboard/Roles/Edit', [
+            'role' => $role,
+            'rolePermissions' => $role->permissions->pluck('id')->toArray(),
+            'allPermissions' => Permission::query()->select(['name','id'])->get(),
+        ]);
     }
 
     /**
@@ -111,7 +117,21 @@ class RoleResourceController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        //
+        abort_if(!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin'), 403, 'You are not allowed to update roles');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $role->update([
+            'name' => Str::slug($request->name),
+        ]);
+
+        if($request->has('permissions') && count($request->get('permissions')) > 0) {
+            $role->syncPermissions($request->get('permissions'));
+        }
+
+        return to_route('roles.index')->with('message', 'Role updated successfully');
     }
 
     /**

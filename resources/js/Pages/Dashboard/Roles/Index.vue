@@ -182,10 +182,19 @@ const deleteModal = (role) => {
                                                             value="Detail"
                                                             typeButton="btnDetail"
                                                         />
-                                                        <TableButton
-                                                            value="Edit"
-                                                            typeButton="btnEdit"
-                                                        />
+                                                        <Link
+                                                            :href="
+                                                                route(
+                                                                    'roles.edit',
+                                                                    role.id
+                                                                )
+                                                            "
+                                                        >
+                                                            <TableButton
+                                                                value="Edit"
+                                                                typeButton="btnEdit"
+                                                            />
+                                                        </Link>
                                                         <TableButton
                                                             @click="
                                                                 deleteModal(

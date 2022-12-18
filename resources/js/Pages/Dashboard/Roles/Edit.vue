@@ -9,28 +9,30 @@ import ProcessingIcon from "@/Components/Icons/ProcessingIcon.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
-    permissions: {
-        type: [Array, Boolean],
-        default: false,
+    role: {
+        type: Object,
+        required: true,
+    },
+    allPermissions: {
+        type: Array,
+    },
+    rolePermissions: {
+        type: Array,
     },
 });
 
 const form = useForm({
-    name: "",
-    permissions: [],
+    name: props.role.name,
+    permissions: props.rolePermissions,
 });
 
 const submit = () => {
-    form.post(route("roles.store"), {
-        onSuccess: () => {
-            form.reset();
-        },
-    });
+    form.put(route("roles.update", { role: props.role.id }));
 };
 </script>
 
 <template>
-    <Head title="Create Role" />
+    <Head title="Edit Role" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -38,7 +40,7 @@ const submit = () => {
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
                 <Link :href="route('roles.index')">Roles</Link>
-                <span class="text-indigo-500"> / Create</span>
+                <span class="text-indigo-500"> / Edit</span>
             </div>
         </template>
 
@@ -76,12 +78,17 @@ const submit = () => {
                                     />
                                 </div>
                                 <div
-                                    v-if="permissions.length > 0"
+                                    v-if="allPermissions.length > 0"
                                     class="w-full col-span-2 mb-3"
                                 >
+                                    <InputLabel
+                                        for="permissions"
+                                        value="Permissions"
+                                        class="text-base text-gray-700 dark:text-gray-200"
+                                    />
                                     <div class="grid grid-cols-4 gap-3">
                                         <div
-                                            v-for="permission in permissions"
+                                            v-for="permission in allPermissions"
                                             :key="permission.id"
                                             class="flex items-center w-full col-span-1"
                                         >
@@ -114,7 +121,7 @@ const submit = () => {
                                 {{
                                     form.processing
                                         ? "Processing..."
-                                        : "Create Role"
+                                        : "Update Role"
                                 }}
                             </SubmitButton>
                         </form>

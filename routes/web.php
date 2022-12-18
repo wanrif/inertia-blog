@@ -50,7 +50,7 @@ Route::resource('dashboard/posts', DashboardPostController::class, ['as' => 'das
 /**
  * * Dashboard Roles Routes
  */
-Route::resource('dashboard/roles', RoleResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin']);
+Route::resource('dashboard/roles', RoleResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin'])->except(['show']);
 
 /**
  * * Dashboard Permissions Routes
