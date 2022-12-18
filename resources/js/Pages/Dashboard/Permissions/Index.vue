@@ -229,6 +229,7 @@ const openDeleteModal = (permission) => {
 
                         <DeleteModal
                             title="Delete Permission"
+                            body="Are you sure you want to delete this permission?"
                             :content="data.delete"
                             @close="data.delete = null"
                         />
