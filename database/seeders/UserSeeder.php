@@ -58,6 +58,9 @@ class UserSeeder extends Seeder
         ]);
 
         $author->assignRole('author');
+        $role = Role::findByName('author');
+        $role->givePermissionTo('manage posts');
+
         $author->posts()->create([
             'title' => 'My First Post',
             'slug' => Str::slug('My First Post') . '-' . Str::random(5),
