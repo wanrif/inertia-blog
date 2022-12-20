@@ -47,9 +47,9 @@ class Post extends Model
     }
 
     public function toSearchableArray()
-{
-    return [
-        'title' => $this->title,
-    ];
-}
+    {
+        return [
+            'title' => $this->title,
+        ];
+    }
 }
