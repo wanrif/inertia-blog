@@ -14,10 +14,8 @@ HSOverlay.on("close", () => {
 });
 
 const form = useForm();
-function deletePost(slug) {
-    form.delete(route("dashboard.posts.destroy", slug), {
-        preserveState: true,
-    });
+function submit() {
+    form.delete(route("dashboard.posts.destroy", props.slug));
 }
 </script>
 
@@ -78,12 +76,12 @@ function deletePost(slug) {
                     </button>
                     <button
                         :disabled="form.processing"
-                        @click.prevent="deletePost(slug)"
+                        @click.prevent="submit"
                         class="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white transition-all border border-transparent rounded-md bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                         data-hs-overlay="#delete-modal"
                     >
                         <svg
-                            v-if="form.precessing"
+                            v-if="form.processing"
                             fill="currentColor"
                             class="w-5 h-5 animate-spin"
                             viewBox="0 0 1792 1792"
