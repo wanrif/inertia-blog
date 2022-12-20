@@ -115,7 +115,7 @@ class PermissionsResourceController extends Controller
     {
         $permission = Permission::findOrFail($id);
 
-        if (in_array($permission->name, ['can manage roles', 'can manage permissions'])) {
+        if (in_array($permission->name, ['manage roles', 'manage permissions'])) {
             return back()->with('error', 'You can not delete "' . $permission->name . '" permission.');
         }
 

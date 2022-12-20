@@ -16,22 +16,22 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         Permission::create([
-            'name' => 'can manage users',
+            'name' => 'manage users',
             'guard_name' => 'web',
         ]);
 
         Permission::create([
-            'name' => 'can manage roles',
+            'name' => 'manage roles',
             'guard_name' => 'web',
         ]);
 
         Permission::create([
-            'name' => 'can manage permissions',
+            'name' => 'manage permissions',
             'guard_name' => 'web',
         ]);
 
         Permission::create([
-            'name' => 'can manage posts',
+            'name' => 'manage posts',
             'guard_name' => 'web',
         ]);
     }

@@ -44,7 +44,7 @@ require __DIR__.'/auth.php';
 /**
  * * Dashboard Posts Routes
  */
-Route::middleware(['auth', 'verified', 'role_or_permission:super-admin|admin|author|can manage posts'])->group(function () {
+Route::middleware(['auth', 'verified', 'role_or_permission:super-admin|admin|author|manage posts'])->group(function () {
     Route::get('/dashboard/posts/getSlug', [DashboardPostController::class, 'getSlug']);
     Route::resource('dashboard/posts', DashboardPostController::class, ['as' => 'dashboard']);
 });

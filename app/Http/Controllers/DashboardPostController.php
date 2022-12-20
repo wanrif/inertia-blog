@@ -104,7 +104,7 @@ class DashboardPostController extends Controller
      */
     public function show(Post $post)
     {
-        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('manage posts'),
         403, 'You are not authorized to view this post.');
 
         return Inertia::render('Dashboard/Posts/Show', [
@@ -126,7 +126,7 @@ class DashboardPostController extends Controller
      */
     public function edit(Post $post)
     {
-        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('manage posts'),
         403, 'You are not authorized to edit this post.');
 
         return Inertia::render('Dashboard/Posts/Edit', [
@@ -149,7 +149,7 @@ class DashboardPostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('manage posts'),
         403, 'You are not authorized to update this post.');
 
         $request->validate([
@@ -192,7 +192,7 @@ class DashboardPostController extends Controller
      */
     public function destroy(Post $post)
     {
-        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('can manage posts'),
+        abort_if($post->user_id !== auth()->user()->id && !auth()->user()->hasPermissionTo('manage posts'),
         403, 'You are not authorized to delete this post.');
 
         if ($post->image) {
