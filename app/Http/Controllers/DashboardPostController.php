@@ -19,12 +19,9 @@ class DashboardPostController extends Controller
     public function index()
     {
         if(auth()->user()->hasRole('author')) {
-            $data = Post::query()
-            ->with('author')
+            $data = Post::search(request('search'))
             ->where('user_id', auth()->user()->id)
-            ->when(request('search'), fn ($query, $search) =>
-            $query->where('title', 'like', "%{$search}%"))
-            ->latest()
+            ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString()
             ->through(fn ($post) => [
@@ -37,11 +34,8 @@ class DashboardPostController extends Controller
         }
 
         if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin')) {
-            $data = Post::query()
-            ->with('author')
-            ->when(request('search'), fn ($query, $search) =>
-            $query->where('title', 'like', "%{$search}%"))
-            ->latest()
+            $data = Post::search(request('search'))
+            ->query(fn ($query) => $query->orderBy('created_at', 'desc'))
             ->paginate(10)
             ->withQueryString()
             ->through(fn ($post) => [

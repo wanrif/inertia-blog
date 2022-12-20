@@ -18,9 +18,8 @@ class PermissionsResourceController extends Controller
     {
         return Inertia::render('Dashboard/Permissions/Index', [
             'permissions' =>
-                Permission::query()
-                    ->orderBy('name','ASC')
-                    ->filter(request()->only('search'))
+                Permission::search(request('search'))
+                    ->query(fn ($query) => $query->orderBy('name'))
                     ->paginate(5)
                     ->withQueryString()
                     ->through(fn ($permission) => [

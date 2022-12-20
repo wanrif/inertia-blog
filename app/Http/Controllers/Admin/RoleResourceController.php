@@ -19,9 +19,8 @@ class RoleResourceController extends Controller
      */
     public function index()
     {
-        $data = Role::query()
-        ->filter(request()->only('search'))
-        ->orderBy('name')
+        $data = Role::search(request('search'))
+        ->query(fn ($query) => $query->orderBy('name'))
         ->paginate(5)
         ->withQueryString()
         ->through(fn ($role) => [

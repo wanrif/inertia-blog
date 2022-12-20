@@ -6,12 +6,15 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory, HasUuids, Sluggable;
+    use HasFactory, HasUuids, Sluggable, Searchable;
 
     protected $guarded = ['id'];
+
+    protected $with = ['author'];
 
     public function author()
     {
@@ -42,4 +45,11 @@ class Post extends Model
     {
         return 'slug';
     }
+
+    public function toSearchableArray()
+{
+    return [
+        'title' => $this->title,
+    ];
+}
 }
