@@ -9,11 +9,11 @@ import toastStore from "@/Stores/toasts";
 const page = usePage();
 
 let removeFinishEventListener = Inertia.on("finish", () => {
-    if (page.props.value.toast.message) {
+    if (page.props.value.toast.success) {
         toastStore.add({
             key: nanoid(6),
             type: "success",
-            message: page.props.value.toast.message,
+            message: page.props.value.toast.success,
         });
     }
     if (page.props.value.toast.error) {

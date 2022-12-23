@@ -23,9 +23,9 @@ const emit = defineEmits(["remove"]);
 <template>
     <div
         :class="{
-            'dark:bg-rose-700/25 border-rose-500 dark:border-rose-700':
+            'dark:bg-rose-700/20 dark:bg-gradient-to-r dark:from-gray-800/95 dark:to-gray-800/95 dark:bg-blend-darken border-rose-500 dark:border-rose-700':
                 props.type === 'error',
-            'dark:bg-green-700/25 border-green-500 dark:border-green-700':
+            'dark:bg-green-700/20 dark:bg-gradient-to-r dark:from-gray-800/95 dark:to-gray-800/95 dark:bg-blend-darken border-green-500 dark:border-green-700':
                 props.type === 'success',
         }"
         class="bg-white border-2 rounded-md shadow-lg"
