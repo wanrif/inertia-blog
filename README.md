@@ -10,11 +10,11 @@ This is a blog web application built using Laravel 9, Inertiajs, Vue 3, and Tail
 
 ## Features
 
-- Dark mode
+- Light and Dark mode
 - Role and permission system
 - Categories for organizing posts
-- User management
 - Filtering posts by category and author
+- User management
 - Password reset and email verification
 - Change password and delete account options
 
