@@ -20,9 +20,12 @@ const props = defineProps({
 });
 
 const isClass = ref({
-    btnDetail: "bg-indigo-500 hover:bg-indigo-600 focus:ring-indigo-500",
-    btnEdit: "bg-teal-500 hover:bg-teal-600 focus:ring-teal-500",
-    btnDelete: "bg-rose-500 hover:bg-rose-600 focus:ring-rose-500",
+    btnDetail:
+        "bg-indigo-500 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:ring-indigo-500",
+    btnEdit:
+        "bg-teal-400 dark:bg-teal-500 hover:bg-teal-500 dark:hover:bg-teal-600 focus:ring-teal-500",
+    btnDelete:
+        "bg-rose-500 dark:bg-rose-600 hover:bg-rose-600 dark:hover:bg-rose-700 focus:ring-rose-500",
 });
 
 const isIcon = shallowRef({

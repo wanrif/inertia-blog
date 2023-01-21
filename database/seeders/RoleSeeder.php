@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -15,17 +14,22 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create([
+        $role = Role::create([
             'name' => 'super-admin',
             'guard_name' => 'web',
         ]);
-        Role::create([
+        $role->givePermissionTo('manage roles', 'manage permissions', 'manage users', 'manage posts');
+
+        $role = Role::create([
             'name' => 'admin',
             'guard_name' => 'web',
         ]);
-        Role::create([
+        $role->givePermissionTo('manage roles', 'manage permissions', 'manage users', 'manage posts');
+
+        $role = Role::create([
             'name' => 'author',
             'guard_name' => 'web',
         ]);
+        $role->givePermissionTo('manage posts');
     }
 }

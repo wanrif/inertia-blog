@@ -1,12 +1,15 @@
 <?php
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\DashboardPostController;
+use App\Http\Controllers\Admin\DashboardCategoriesController;
+use App\Http\Controllers\Admin\DashboardPostController;
 use App\Http\Controllers\Admin\PermissionsResourceController;
 use App\Http\Controllers\Admin\RoleResourceController;
+use App\Http\Controllers\Admin\UserResourceController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,18 +26,30 @@ use App\Http\Controllers\Admin\RoleResourceController;
  * * Home
  */
 Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
+    return Inertia::render('Main/Home');
 })->name('home');
+
+/**
+ * * Blog Routes
+ */
+Route::get('/blog', [BlogController::class, 'index'])->middleware('web')->name('blog.index');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->middleware('web')->name('blog.show');
 
 /**
  * * Dashboard Routes
  */
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard/Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+/**
+ * * Profile Routes
+ */
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 /**
  * * Auth Routes
@@ -50,16 +65,27 @@ Route::middleware(['auth', 'verified', 'role_or_permission:super-admin|admin|aut
 });
 
 /**
- * * Dashboard Roles Routes
+ * * Dashboard Category Routes
  */
-Route::resource('dashboard/roles', RoleResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin'])->except(['show']);
+Route::resource('dashboard/categories', DashboardCategoriesController::class, ['as' => 'dashboard'])->middleware(['auth', 'verified', 'role_or_permission:super-admin|admin|manage categories'])->except(['create', 'show', 'edit']);
 
 /**
- * * Dashboard Permissions Routes
+ * * Dashboard Roles, Permissions and Users Routes
+ * * Only Super Admin and Admin can access this routes
  */
-Route::resource('dashboard/permissions', PermissionsResourceController::class)->middleware(['auth', 'verified', 'role:super-admin|admin'])->except(['show', 'edit']);
+Route::group(['middleware' => ['auth', 'verified', 'role:super-admin|admin']], function () {
+    /**
+     * * Dashboard Roles Routes
+     */
+    Route::resource('dashboard/roles', RoleResourceController::class)->except(['show']);
 
-/**
- * * Post Routes
- */
-// Route::resource('posts', PostController::class)->except(['create', 'edit', 'update', 'destroy']);
+    /**
+     * * Dashboard Permissions Routes
+     */
+    Route::resource('dashboard/permissions', PermissionsResourceController::class)->except(['create', 'show', 'edit']);
+
+    /**
+     * * Dashboard Users Routes
+     */
+    Route::resource('dashboard/users', UserResourceController::class)->except('show');
+});

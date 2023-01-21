@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Role;
-use Inertia\Inertia;
-use App\Models\Permission;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Permission;
+use App\Models\Role;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class RoleResourceController extends Controller
 {
@@ -27,8 +26,8 @@ class RoleResourceController extends Controller
             'id' => $role->id,
             'name' => $role->name,
             'permissions' => $role->permissions->pluck('name')->toArray(),
-            'created_at' => $role->created_at->isoFormat('dddd, D MMMM Y'),
-            'updated_at' => $role->updated_at->isoFormat('dddd, D MMMM Y'),
+            'created_at' => $role->created_at->isoFormat('D MMMM Y H:mm'),
+            'updated_at' => $role->updated_at->isoFormat('D MMMM Y H:mm'),
         ]);
 
         return Inertia::render('Dashboard/Roles/Index', [
@@ -45,7 +44,7 @@ class RoleResourceController extends Controller
     public function create()
     {
         return Inertia::render('Dashboard/Roles/Create', [
-            'permissions' => Permission::query()->select(['name','id'])->get(),
+            'permissions' => Permission::query()->select(['name', 'id'])->get(),
         ]);
     }
 
@@ -58,7 +57,7 @@ class RoleResourceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:roles,name',
         ]);
 
         $role = Role::create([
@@ -66,11 +65,15 @@ class RoleResourceController extends Controller
             'guard_name' => 'web',
         ]);
 
-        if($request->has('permissions') && count($request->get('permissions')) > 0) {
+        if ($request->has('permissions') && count($request->get('permissions')) > 0) {
             $role->syncPermissions($request->get('permissions'));
         }
 
-        return to_route('roles.index')->with('message', 'Role created successfully');
+        if ($role) {
+            return to_route('roles.index')->with('success', 'Role created successfully');
+        }
+
+        return to_route('roles.index')->with('error', 'Role could not be created');
     }
 
     /**
@@ -90,12 +93,14 @@ class RoleResourceController extends Controller
      * @param  Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit($id)
     {
+        $role = Role::findOrFail($id);
+
         return Inertia::render('Dashboard/Roles/Edit', [
             'role' => $role,
             'rolePermissions' => $role->permissions->pluck('id')->toArray(),
-            'allPermissions' => Permission::query()->select(['name','id'])->get(),
+            'allPermissions' => Permission::query()->select(['name', 'id'])->get(),
         ]);
     }
 
@@ -106,21 +111,25 @@ class RoleResourceController extends Controller
      * @param  Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $id)
     {
+        $role = Role::findOrFail($id);
+
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:roles,name,'.$role->id,
         ]);
 
         $role->update([
             'name' => Str::slug($request->name),
         ]);
 
-        if($request->has('permissions') && count($request->get('permissions')) > 0) {
-            $role->syncPermissions($request->get('permissions'));
+        $role->syncPermissions($request->get('permissions'))->touch();
+
+        if ($role) {
+            return to_route('roles.index')->with('success', 'Role has been updated.');
         }
 
-        return to_route('roles.index')->with('message', 'Role updated successfully');
+        return to_route('roles.index')->with('error', 'Something went wrong, please try again. Or you did not change anything.');
     }
 
     /**
@@ -129,14 +138,16 @@ class RoleResourceController extends Controller
      * @param  Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy($id)
     {
-        if(in_array($role->name, ['super-admin', 'admin'])) {
-            return back()->with('error', 'You can not delete "' . $role->name . '" role');
+        $role = Role::findOrFail($id);
+
+        if (in_array($role->name, ['super-admin', 'admin'])) {
+            return back()->with('error', 'You can not delete "'.$role->name.'" role');
         }
 
-        if($role->delete()){
-            return back()->with('message', 'Role deleted successfully');
+        if ($role->delete()) {
+            return back()->with('success', 'Role deleted successfully');
         }
 
         return back()->with('error', 'Something went wrong, please try again.');

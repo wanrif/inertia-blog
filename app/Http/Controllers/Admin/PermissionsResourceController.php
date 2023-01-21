@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PermissionsResourceController extends Controller
 {
@@ -17,16 +17,15 @@ class PermissionsResourceController extends Controller
     public function index()
     {
         return Inertia::render('Dashboard/Permissions/Index', [
-            'permissions' =>
-                Permission::search(request('search'))
+            'permissions' => Permission::search(request('search'))
                     ->query(fn ($query) => $query->orderBy('name'))
                     ->paginate(5)
                     ->withQueryString()
                     ->through(fn ($permission) => [
                         'id' => $permission->id,
                         'name' => $permission->name,
-                        'created_at' => $permission->created_at->format('d/m/Y'),
-                        'updated_at' => $permission->updated_at->format('d/m/Y'),
+                        'created_at' => $permission->created_at->format('d/m/Y H:i'),
+                        'updated_at' => $permission->updated_at->format('d/m/Y H:i'),
                     ]),
             'filters' => request()->only('search'),
         ]);
@@ -39,7 +38,7 @@ class PermissionsResourceController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Dashboard/Permissions/Create');
+        //
     }
 
     /**
@@ -51,7 +50,7 @@ class PermissionsResourceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:permissions,name'],
         ]);
 
         Permission::create([
@@ -93,7 +92,7 @@ class PermissionsResourceController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:permissions,name,'.$id],
         ]);
 
         $permission = Permission::findOrFail($id);
@@ -102,7 +101,11 @@ class PermissionsResourceController extends Controller
             'name' => strtolower($request->name),
         ]);
 
-        return to_route('permissions.index')->with('message', 'Permission has been updated.');
+        if ($permission->wasChanged()) {
+            return back()->with('success', 'Permission has been updated.');
+        }
+
+        return back()->with('error', 'Something went wrong, please try again. Or you did not change anything.');
     }
 
     /**
@@ -116,11 +119,11 @@ class PermissionsResourceController extends Controller
         $permission = Permission::findOrFail($id);
 
         if (in_array($permission->name, ['manage roles', 'manage permissions'])) {
-            return back()->with('error', 'You can not delete "' . $permission->name . '" permission.');
+            return back()->with('error', 'You can not delete "'.$permission->name.'" permission.');
         }
 
         if ($permission->delete()) {
-            return back()->with('message', 'Permission has been deleted.');
+            return back()->with('success', 'Permission has been deleted.');
         }
 
         return back()->with('error', 'Something went wrong, please try again.');

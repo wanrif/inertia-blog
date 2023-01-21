@@ -1,8 +1,9 @@
 <script setup>
 import axios from "axios";
-import { ref } from "vue";
-import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
+import { ref, reactive } from "vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Editor from "ckeditor5-custom-build/build/ckeditor";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
@@ -11,12 +12,14 @@ import ProcessingIcon from "@/Components/Icons/ProcessingIcon.vue";
 
 const props = defineProps({
     post: Object,
+    categories: Object,
 });
 
 const form = useForm({
     _method: "PUT",
     title: props.post.title,
     slug: props.post.slug,
+    category_id: props.post.category_id,
     image: props.post.image,
     body: props.post.body,
 });
@@ -66,10 +69,47 @@ const imageField = () => {
     };
 };
 
+const texteditor = reactive({
+    editor: Editor,
+    editorConfig: {
+        toolbar: {
+            items: [
+                "heading",
+                "|",
+                "bold",
+                "italic",
+                "strikethrough",
+                "underline",
+                "link",
+                "bulletedList",
+                "numberedList",
+                "|",
+                "alignment",
+                "outdent",
+                "indent",
+                "|",
+                "htmlEmbed",
+                "imageUpload",
+                "blockQuote",
+                "insertTable",
+                "mediaEmbed",
+                "|",
+                "removeFormat",
+                "undo",
+                "redo",
+            ],
+        },
+        language: "en",
+        table: {
+            contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+        },
+    },
+});
+
 /**
  * Update Form
  */
-const update = () => {
+const updatePost = () => {
     form.post(route("dashboard.posts.update", props.post.slug), {
         preserveState: true,
     });
@@ -84,16 +124,21 @@ const update = () => {
             <div
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
-                <Link :href="route('dashboard.posts.index')">Posts</Link>
-                <span class="text-indigo-500"> / Edit</span>
+                <Link :href="route('dashboard.posts.index')">Posts / </Link>
+                <span class="text-indigo-500">{{ props.post.title }}</span>
+                <span> / Edit</span>
             </div>
         </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <form @submit.prevent="update">
+                <div
+                    class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg"
+                >
+                    <div
+                        class="p-6 bg-white border-b dark:border-b-0 dark:bg-gray-800"
+                    >
+                        <form @submit.prevent="updatePost">
                             <div class="grid grid-cols-2 gap-3 mb-3">
                                 <!-- TITLE -->
                                 <div
@@ -102,12 +147,12 @@ const update = () => {
                                     <InputLabel
                                         for="title"
                                         value="Title"
-                                        class="text-base text-gray-700"
+                                        class="text-base text-gray-700 dark:text-gray-200"
                                     />
                                     <TextInput
                                         id="title"
                                         type="text"
-                                        class="block w-full mt-1"
+                                        class="block w-full mt-1 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-800"
                                         :class="'ring-red-500' +
                                             (form.errors.title ? ' ring-2' : '')
                                         "
@@ -129,12 +174,12 @@ const update = () => {
                                     <InputLabel
                                         for="slug"
                                         value="Slug"
-                                        class="text-base text-gray-700"
+                                        class="text-base text-gray-700 dark:text-gray-200"
                                     />
                                     <TextInput
                                         id="slug"
                                         type="text"
-                                        class="block w-full mt-1 placeholder-gray-400 bg-gray-200"
+                                        class="block w-full mt-1 placeholder-gray-400 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-800"
                                         :class="'ring-red-500' +
                                             (form.errors.slug ? ' ring-2' : '')
                                         "
@@ -156,7 +201,7 @@ const update = () => {
                                     <InputLabel
                                         for="image"
                                         value="Image"
-                                        class="text-base text-gray-700"
+                                        class="text-base text-gray-700 dark:text-gray-200"
                                     />
                                     <div class="flex items-center gap-2">
                                         <label class="w-full">
@@ -167,7 +212,7 @@ const update = () => {
                                                 @change="imageField().onChange"
                                                 id="imageInput"
                                                 type="file"
-                                                class="block w-full text-sm border border-gray-100 rounded-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none focus:rounded-full"
+                                                class="block w-full text-sm border border-gray-100 rounded-full dark:border-gray-700 text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 dark:text-gray-200 hover:file:bg-violet-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none focus:rounded-full"
                                             />
                                         </label>
                                         <button
@@ -207,20 +252,56 @@ const update = () => {
                                     </div>
                                 </div>
 
+                                <!-- CATEGORY -->
+                                <div
+                                    class="w-full col-span-2 mb-3 md:col-span-1"
+                                >
+                                    <InputLabel
+                                        for="category_id"
+                                        value="Category"
+                                        class="text-base text-gray-700 dark:text-gray-200"
+                                    />
+                                    <select
+                                        v-model="form.category_id"
+                                        class="dark:bg-gray-700 dark:text-gray-200 dark:border-gray-800 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+                                    >
+                                        <option disabled value="">
+                                            Please select one category
+                                        </option>
+                                        <option
+                                            v-for="category in props.categories"
+                                            :key="category.id"
+                                            :value="
+                                                category.id == form.category_id
+                                                    ? form.category_id
+                                                    : category.id
+                                            "
+                                            :selected="
+                                                category.id == form.category_id
+                                                    ? form.category_id
+                                                    : category.id
+                                            "
+                                        >
+                                            {{ category.name }}
+                                        </option>
+                                    </select>
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.category_id"
+                                    />
+                                </div>
+
                                 <!-- BODY -->
-                                <div class="w-full col-span-2 mb-20">
+                                <div class="w-full col-span-2 mb-3">
                                     <InputLabel
                                         value="Body"
-                                        class="text-base text-gray-700"
+                                        class="text-base text-gray-700 dark:text-gray-200"
                                     />
-                                    <QuillEditor
-                                        v-model:content="form.body"
-                                        toolbar="essential"
-                                        contentType="html"
-                                        id="on-error-body"
-                                        theme="snow"
-                                        required
-                                    />
+                                    <ckeditor
+                                        :editor="texteditor.editor"
+                                        v-model="form.body"
+                                        :config="texteditor.editorConfig"
+                                    ></ckeditor>
                                     <div
                                         v-if="form.errors.body"
                                         class="mt-1 text-sm text-red-500"

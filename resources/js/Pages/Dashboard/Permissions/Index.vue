@@ -1,16 +1,16 @@
 <script setup>
 import { ref, watch } from "vue";
-import { Head, Link } from "@inertiajs/inertia-vue3";
-import { Inertia } from "@inertiajs/inertia";
+import { Head, Link, router } from "@inertiajs/vue3";
 import { debounce } from "lodash";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import Pagination from "@/Components/Pagination.vue";
+import Pagination from "@/Components/DashboardPagination.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import ToastNotification from "@/Components/ToastNotification.vue";
 import TableButton from "@/Components/TableButton.vue";
-import DetailModal from "@/Components/Admin/Permission/DetailModal.vue";
-import EditModal from "@/Components/Admin/Permission/EditModal.vue";
-import DeleteModal from "@/Components/Admin/Permission/DeleteModal.vue";
+import DetailModal from "./Partials/DetailModal.vue";
+import EditModal from "./Partials/EditModal.vue";
+import DeleteModal from "./Partials/DeleteModal.vue";
+import CreateModal from "./Partials/CreateModal.vue";
 
 const props = defineProps({
     permissions: Object,
@@ -24,7 +24,7 @@ let search = ref(props.filters.search);
 watch(
     search,
     debounce((value) => {
-        Inertia.get(
+        router.get(
             route("permissions.index"),
             { search: value },
             {
@@ -43,10 +43,15 @@ const reset = () => {
 };
 
 const data = ref({
+    create: false,
     detail: null,
     edit: null,
     delete: null,
 });
+
+const openCreateModal = () => {
+    data.value.create = true;
+};
 
 const openDetailModal = (permission) => {
     data.value.detail = permission;
@@ -68,20 +73,21 @@ const openDeleteModal = (permission) => {
         <ToastNotification />
 
         <template #header>
-            <div
-                class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
+            <Link
+                :href="route('permissions.index')"
+                class="text-xl font-bold leading-tight text-gray-800 cursor-pointer dark:text-gray-200"
             >
                 Permissions
-            </div>
+            </Link>
         </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
                 >
                     <div
-                        class="p-4 bg-white border-b border-gray-200 dark:border-b-0 dark:bg-gray-800"
+                        class="p-4 bg-white border-b border-gray-200 dark:border-b-0 dark:bg-gray-900"
                     >
                         <div
                             class="flex flex-col md:items-center md:justify-between gap-y-2 md:gap-y-0 md:flex-row"
@@ -91,7 +97,7 @@ const openDeleteModal = (permission) => {
                                     v-model="search"
                                     type="text"
                                     class="block w-full px-3 py-2 text-sm border-gray-200 rounded-md shadow-sm md:w-72 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-                                    placeholder="Search..."
+                                    placeholder="Search Permission..."
                                 />
                                 <button
                                     v-if="search"
@@ -102,12 +108,12 @@ const openDeleteModal = (permission) => {
                                     <CloseIcon />
                                 </button>
                             </div>
-                            <Link
-                                :href="route('permissions.create')"
+                            <button
+                                @click="openCreateModal"
                                 class="px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-indigo-600 rounded-lg shadow-md w-52 hover:bg-teal-600 focus:ring-teal-500 focus:ring-offset-teal-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
                             >
                                 Create Permission
-                            </Link>
+                            </button>
                         </div>
 
                         <!-- Table -->
@@ -140,6 +146,12 @@ const openDeleteModal = (permission) => {
                                                     </th>
                                                     <th
                                                         scope="col"
+                                                        class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-200"
+                                                    >
+                                                        Updated AT
+                                                    </th>
+                                                    <th
+                                                        scope="col"
                                                         class="px-6 py-3 text-xs font-medium text-right text-gray-500 uppercase dark:text-gray-200"
                                                     >
                                                         Action
@@ -166,6 +178,13 @@ const openDeleteModal = (permission) => {
                                                     >
                                                         {{
                                                             permission.created_at
+                                                        }}
+                                                    </td>
+                                                    <td
+                                                        class="px-6 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200"
+                                                    >
+                                                        {{
+                                                            permission.updated_at
                                                         }}
                                                     </td>
                                                     <td
@@ -215,6 +234,12 @@ const openDeleteModal = (permission) => {
                             </div>
                         </div>
 
+                        <CreateModal
+                            title="Create Permission"
+                            :isOpen="data.create"
+                            @close="data.create = false"
+                        />
+
                         <DetailModal
                             title="Detail Permission"
                             :content="data.detail"
@@ -246,3 +271,42 @@ const openDeleteModal = (permission) => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.bg-modal-enter-active {
+    animation: fade-in 0.5s;
+}
+.bg-modal-leave-active {
+    animation: fade-in 0.5s reverse;
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.modal-enter-active {
+    animation: bounce-in 0.5s;
+}
+.modal-leave-active {
+    animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+</style>

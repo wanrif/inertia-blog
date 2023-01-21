@@ -1,12 +1,11 @@
 <script setup>
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import SubmitButton from "@/Components/SubmitButton.vue";
 import ProcessingIcon from "@/Components/Icons/ProcessingIcon.vue";
-import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
     permissions: {
@@ -68,6 +67,7 @@ const submit = () => {
                                         "
                                         v-model="form.name"
                                         placeholder="Role Name"
+                                        autofocus
                                         required
                                     />
                                     <InputError
@@ -85,17 +85,26 @@ const submit = () => {
                                             :key="permission.id"
                                             class="flex items-center w-full col-span-1"
                                         >
-                                            <Checkbox
-                                                name="permissions"
-                                                v-model:checked="
-                                                    form.permissions
-                                                "
-                                                :value="permission.id"
-                                            />
-                                            <span
-                                                class="ml-3 text-sm text-gray-500 dark:text-gray-400"
-                                                >{{ permission.name }}
-                                            </span>
+                                            <div class="flex items-center">
+                                                <input
+                                                    v-model="form.permissions"
+                                                    :id="
+                                                        'checked-checkbox-' +
+                                                        permission.id
+                                                    "
+                                                    type="checkbox"
+                                                    :value="permission.id"
+                                                    class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                />
+                                                <label
+                                                    :for="
+                                                        'checked-checkbox-' +
+                                                        permission.id
+                                                    "
+                                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                                    >{{ permission.name }}
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

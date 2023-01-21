@@ -14,8 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->ulid('id')->primary();
             $table->foreignUlid('user_id');
+            $table->foreignid('category_id');
             $table->string('title');
             $table->string('slug');
             $table->string('image')->nullable();

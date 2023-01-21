@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUlids, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasUlids, HasRoles, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -48,7 +49,21 @@ class User extends Authenticatable
     /**
      * Get the posts for the user.
      */
-    public function posts() {
+    public function posts()
+    {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+        ];
     }
 }

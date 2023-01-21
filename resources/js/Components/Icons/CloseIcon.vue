@@ -1,8 +1,18 @@
+<script setup>
+defineProps({
+    fill: {
+        type: String,
+        default: "dark:fill-gray-400",
+    },
+});
+</script>
+
 <template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        class="w-5 h-5 dark:fill-gray-400"
+        :class="fill"
+        class="w-5 h-5"
     >
         <path
             fill-rule="evenodd"

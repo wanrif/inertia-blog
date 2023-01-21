@@ -1,40 +1,36 @@
 import './bootstrap';
 import '../css/app.css';
-import('preline');
+import 'flowbite';
 
 import { createApp, h } from 'vue';
-import { createInertiaApp, usePage } from '@inertiajs/inertia-vue3';
-import { InertiaProgress } from '@inertiajs/progress';
+import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import CKEditor from '@ckeditor/ckeditor5-vue';
+import VueLazyload from 'vue-lazyload';
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Wanrif';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
-    setup({ el, app, props, plugin }) {
+    setup({ el, App, props, plugin }) {
         return createApp({
-            mounted() {
-                if (
-                    localStorage.getItem("theme") === "dark" ||
-                    (!("theme" in localStorage) &&
-                        window.matchMedia("(prefers-color-scheme: dark)").matches)
-                ) {
-                    document.documentElement.classList.add("dark");
-                } else {
-                    document.documentElement.classList.remove("dark");
-                }
-            },
-            render: () => h(app, props)
+            render: () => h(App, props)
         })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
-            .component('QuillEditor', QuillEditor)
+            .use(CKEditor)
+            .use(VueLazyload, {
+                preLoad: 1.3,
+                error: '/storage/static/error.gif',
+                loading: '/storage/static/loading.gif',
+                attempt: 1
+            })
             .mount(el);
     },
+    progress: {
+        color: '#6D28D9',
+        showSpinner: true,
+    },
 });
-
-InertiaProgress.init({ color: '#6D28D9', showSpinner: true, });

@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use Inertia\Middleware;
-use Tightenco\Ziggy\Ziggy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Inertia\Middleware;
+use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -36,11 +37,14 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request)
     {
         return array_merge(parent::share($request), [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
             'auth' => Auth::user() ? [
                 'user' => [
-                    'username' => Auth::user()->name,
+                    'name' => Auth::user()->name,
+                    'email' => Auth::user()->email,
                     'role' => Auth::user()->getRoleNames()[0],
-                ]
+                ],
             ] : null,
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
@@ -48,7 +52,7 @@ class HandleInertiaRequests extends Middleware
                 ]);
             },
             'toast' => [
-                'message' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
         ]);

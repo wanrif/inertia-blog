@@ -1,15 +1,14 @@
 <script setup>
 import { ref, watch } from "vue";
-import { Head, Link } from "@inertiajs/inertia-vue3";
-import { Inertia } from "@inertiajs/inertia";
+import { Head, Link, router } from "@inertiajs/vue3";
 import { debounce } from "lodash";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import Pagination from "@/Components/Pagination.vue";
+import Pagination from "@/Components/DashboardPagination.vue";
 import ToastNotification from "@/Components/ToastNotification.vue";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
-import DetailModal from "@/Components/Role/DetailModal.vue";
 import TableButton from "@/Components/TableButton.vue";
-import DeleteModal from "@/Components/Role/DeleteModal.vue";
+import DetailModal from "./Partials/DetailModal.vue";
+import DeleteModal from "./Partials/DeleteModal.vue";
 
 const props = defineProps({
     roles: Object,
@@ -24,7 +23,7 @@ let search = ref(props.filters.search);
 watch(
     search,
     debounce((value) => {
-        Inertia.get(
+        router.get(
             route("roles.index"),
             { search: value },
             {
@@ -63,20 +62,21 @@ const deleteModal = (role) => {
         <ToastNotification />
 
         <template #header>
-            <div
-                class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
+            <Link
+                :href="route('roles.index')"
+                class="text-xl font-bold leading-tight text-gray-800 cursor-pointer dark:text-gray-200"
             >
                 Roles
-            </div>
+            </Link>
         </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
                 >
                     <div
-                        class="p-4 bg-white border-b border-gray-200 dark:border-b-0 dark:bg-gray-800"
+                        class="p-4 bg-white border-b border-gray-200 dark:border-b-0 dark:bg-gray-900"
                     >
                         <div
                             class="flex flex-col md:items-center md:justify-between gap-y-2 md:gap-y-0 md:flex-row"
@@ -86,7 +86,7 @@ const deleteModal = (role) => {
                                     v-model="search"
                                     type="text"
                                     class="block w-full px-3 py-2 text-sm border-gray-200 rounded-md shadow-sm md:w-72 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-                                    placeholder="Search..."
+                                    placeholder="Search Role..."
                                 />
                                 <button
                                     v-if="search"
@@ -223,7 +223,7 @@ const deleteModal = (role) => {
 
                         <DetailModal
                             id="detail-modal"
-                            title="Role Details"
+                            title="Detail Role"
                             :content="data.detail"
                             @close="data.detail = null"
                         />
@@ -246,3 +246,42 @@ const deleteModal = (role) => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.bg-modal-enter-active {
+    animation: fade-in 0.5s;
+}
+.bg-modal-leave-active {
+    animation: fade-in 0.5s reverse;
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.modal-enter-active {
+    animation: bounce-in 0.5s;
+}
+.modal-leave-active {
+    animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+</style>

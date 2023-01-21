@@ -1,26 +1,25 @@
 <script setup>
-import { Inertia } from "@inertiajs/inertia";
-import { usePage } from "@inertiajs/inertia-vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { onUnmounted } from "vue";
 import { nanoid } from "nanoid";
 import ToastItem from "@/Components/ToastItem.vue";
-import toastStore from "@/Stores/toasts";
+import toastStore from "@/Store/toast";
 
-const page = usePage();
+let removeFinishEventListener = router.on("finish", () => {
+    const { success, error } = usePage().props.toast;
 
-let removeFinishEventListener = Inertia.on("finish", () => {
-    if (page.props.value.toast.success) {
+    if (success) {
         toastStore.add({
             key: nanoid(6),
             type: "success",
-            message: page.props.value.toast.success,
+            message: success,
         });
     }
-    if (page.props.value.toast.error) {
+    if (error) {
         toastStore.add({
             key: nanoid(6),
             type: "error",
-            message: page.props.value.toast.error,
+            message: error,
         });
     }
 });
@@ -39,7 +38,7 @@ onUnmounted(() => removeFinishEventListener());
             :key="item.key"
             :type="item.type"
             :message="item.message"
-            :duration="3000"
+            :duration="3500"
             @remove="toastStore.remove(index)"
         />
     </TransitionGroup>
