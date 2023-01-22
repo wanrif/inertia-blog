@@ -20,8 +20,7 @@ class UserResourceController extends Controller
     {
         return Inertia::render('Dashboard/User/Index', [
             'users' => User::search(request('search'))
-                        ->query(fn ($query) =>
-                            $query->withCount('posts')->orderBy('created_at'))
+                        ->query(fn ($query) => $query->withCount('posts')->orderBy('created_at'))
                         ->paginate(5)
                         ->withQueryString()
                         ->through(fn ($user) => [
@@ -126,7 +125,7 @@ class UserResourceController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$id,
             'role' => 'required',
         ]);
 
