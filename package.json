@@ -2,7 +2,6 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "share": "vite --host 192.168.1.3 --port 8181",
         "build": "vite build"
     },
     "devDependencies": {
