@@ -1,19 +1,24 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import { truncate, debounce } from "lodash";
 import CloseIcon from "@/Components/Icons/CloseIcon.vue";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Pagination from "@/Components/MainPagination.vue";
 import TagIcon from "@/Components/Icons/TagIcon.vue";
+import InputLabel from "@/Components/InputLabel.vue";
 
 const props = defineProps({
     posts: Object,
+    categories: Object,
+    authors: Object,
     filters: Object,
 });
 
 const form = reactive({
     search: props.filters.search,
+    category: props.filters.category,
+    author: props.filters.author,
 });
 
 watch(
@@ -21,7 +26,11 @@ watch(
     debounce((value) => {
         router.get(
             route("blog.index"),
-            { search: value.search },
+            {
+                search: value.search,
+                category: value.category,
+                author: value.author,
+            },
             {
                 preserveState: true,
                 replace: true,
@@ -31,8 +40,41 @@ watch(
     { deep: true }
 );
 
+const isOpen = ref(false);
+
+const openFilter = () => {
+    isOpen.value = true;
+};
+
+const closeFilter = () => {
+    isOpen.value = false;
+};
+
+const closeOnEscape = (e) => {
+    if (e.key === "Escape" && isOpen.value) {
+        closeFilter();
+    }
+};
+
+onMounted(() => document.addEventListener("keydown", closeOnEscape));
+
+onUnmounted(() => {
+    document.removeEventListener("keydown", closeOnEscape);
+});
+
+/**
+ * Reset search & category filters
+ */
 const reset = () => {
-    form.search = null;
+    form.search = "";
+};
+
+/**
+ * Reset all filters
+ */
+const resetFilter = () => {
+    form.category = "";
+    form.author = "";
 };
 </script>
 
@@ -73,22 +115,96 @@ const reset = () => {
                     </div>
                 </div>
                 <div class="px-3 sm:px-0">
-                    <div
-                        class="flex items-center w-full gap-1 p-3 mb-5 bg-white border border-gray-300 rounded sm:text-sm focus:border-cyan-500 focus:ring-cyan-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 max-w-max sm:max-w-max"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            class="w-4 h-4"
+                    <div class="flex gap-2">
+                        <button
+                            @click="openFilter"
+                            class="flex items-center w-full gap-1 p-3 mb-5 bg-white border border-gray-300 rounded-full sm:text-sm focus:border-cyan-500 focus:ring-cyan-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 max-w-max sm:max-w-max"
                         >
-                            <path
-                                fill-rule="evenodd"
-                                d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                        Filter
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                class="w-4 h-4"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            Filter
+                        </button>
+                        <button
+                            v-if="form.category || form.author"
+                            @click="resetFilter()"
+                            class="flex items-center w-full gap-1 p-3 mb-5 bg-white border border-gray-300 rounded-full sm:text-sm focus:border-cyan-500 focus:ring-cyan-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 max-w-max sm:max-w-max"
+                        >
+                            reset
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <transition name="fade">
+                            <div
+                                @click.self="closeFilter"
+                                v-if="isOpen"
+                                class="fixed inset-0 z-10 bg-gray-800 bg-opacity-50 sm:bg-opacity-50 sm:bg-black dark:bg-opacity-50 backdrop-blur-sm sm:backdrop-blur-none"
+                            ></div>
+                        </transition>
+                        <transition name="fade">
+                            <div
+                                v-if="isOpen"
+                                class="fixed z-20 flex items-center justify-center"
+                            >
+                                <div
+                                    class="flex gap-3 p-3 overflow-hidden bg-white rounded-lg shadow-xl dark:text-gray-200 dark:bg-gray-800"
+                                >
+                                    <div>
+                                        <InputLabel
+                                            value="Category"
+                                            class="mb-1 text-sm text-gray-700 dark:text-gray-200"
+                                        />
+                                        <select
+                                            v-model="form.category"
+                                            class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md pr-9 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                        >
+                                            <option :value="null" selected />
+                                            <option
+                                                v-for="(
+                                                    category, key
+                                                ) in props.categories"
+                                                :key="key"
+                                                :value="category"
+                                            >
+                                                {{ category }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <InputLabel
+                                            value="Author"
+                                            class="mb-1 text-sm text-gray-700 dark:text-gray-200"
+                                        />
+                                        <select
+                                            v-model="form.author"
+                                            class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md pr-9 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                        >
+                                            <option value="" selected />
+                                            <option
+                                                v-for="(
+                                                    author, key
+                                                ) in props.authors"
+                                                :key="key"
+                                                :value="author"
+                                            >
+                                                {{ author }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </transition>
                     </div>
                 </div>
             </div>
@@ -206,3 +322,18 @@ const reset = () => {
         </div>
     </MainLayout>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+.fade-enter-to,
+.fade-leave {
+    opacity: 1;
+}
+</style>

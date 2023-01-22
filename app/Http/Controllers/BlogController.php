@@ -18,8 +18,9 @@ class BlogController extends Controller
         ->query(fn ($query) => $query->join('categories', 'posts.category_id', 'categories.id')
                 ->join('users', 'posts.user_id', 'users.id')
                 ->select(['posts.id', 'posts.title', 'posts.slug', 'posts.body', 'categories.name as category', 'users.name as author', 'posts.created_at'])
-                ->orderBy('posts.created_at', 'DESC')
-        )
+                ->when(request('category') ?? null, fn ($query) => $query->where('categories.name', request('category')))
+                ->when(request('author') ?? null, fn ($query) => $query->where('users.name', request('author')))
+                ->orderBy('posts.created_at', 'DESC'))
         ->paginate(6)
         ->withQueryString()
         ->through(fn ($post) => [
@@ -33,7 +34,9 @@ class BlogController extends Controller
 
         return Inertia::render('Main/Blog/Index', [
             'posts' => $data,
-            'filters' => request()->only(['search']),
+            'categories' => Post::select('category_id')->distinct()->get()->map(fn ($post) => $post->category->name)->unique()->values(),
+            'authors' => Post::select('user_id')->distinct()->get()->map(fn ($post) => $post->author->name)->unique()->values(),
+            'filters' => request()->only(['search', 'category', 'author']),
         ]);
     }
 

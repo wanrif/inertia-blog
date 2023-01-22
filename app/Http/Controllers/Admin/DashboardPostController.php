@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -31,8 +32,8 @@ class DashboardPostController extends Controller
 
         return Inertia::render('Dashboard/Posts/Index', [
             'posts' => $data
-            ->when(request('category') ?? null, fn ($query) => $query->whereHas('category', fn ($query) => $query->where('name', request('category'))
-                ))
+            ->when(request('category') ?? null, fn ($query) => $query->whereHas('category', fn ($query) => $query->where('name', request('category'))))
+            ->when(request('author') ?? null, fn ($query) => $query->whereHas('author', fn ($query) => $query->where('name', request('author'))))
             ->paginate(5)
             ->withQueryString()
             ->through(fn ($post) => [
@@ -43,9 +44,12 @@ class DashboardPostController extends Controller
                 'category' => $post->category->name,
                 'created_at' => $post->created_at->diffForHumans(),
             ]),
-            'filters' => request()->only(['search', 'category']),
+            'filters' => request()->only(['search', 'category', 'author']),
             'categories' => Category::all()->sortBy('name')->map(fn ($category) => [
                 'name' => $category->name,
+            ]),
+            'authors' => User::all()->sortBy('name')->map(fn ($author) => [
+                'name' => $author->name,
             ]),
         ]);
     }

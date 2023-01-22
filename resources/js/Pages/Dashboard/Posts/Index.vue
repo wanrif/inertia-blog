@@ -14,6 +14,7 @@ const props = defineProps({
     posts: Object,
     filters: Object,
     categories: Object,
+    authors: Object,
 });
 
 /**
@@ -22,6 +23,7 @@ const props = defineProps({
 const form = reactive({
     search: props.filters.search,
     category: props.filters.category,
+    author: props.filters.author,
 });
 
 watch(
@@ -29,7 +31,11 @@ watch(
     debounce((value) => {
         router.get(
             route("dashboard.posts.index"),
-            { search: value.search, category: value.category },
+            {
+                search: value.search,
+                category: value.category,
+                author: value.author,
+            },
             {
                 preserveState: true,
                 replace: true,
@@ -42,8 +48,9 @@ watch(
  * Reset search input
  */
 const reset = () => {
-    form.search = null;
-    form.category = null;
+    form.search = "";
+    form.category = "";
+    form.author = "";
 };
 
 const data = reactive({
@@ -129,14 +136,14 @@ onUnmounted(() => {
                                     </button>
 
                                     <div class="relative">
-                                        <transition name="bg-modal">
+                                        <transition name="fade">
                                             <div
                                                 @click.self="closeFilter"
                                                 v-if="isOpen"
                                                 class="fixed inset-0 z-10 bg-black bg-opacity-20 dark:bg-opacity-40"
                                             ></div>
                                         </transition>
-                                        <transition name="bounce">
+                                        <transition name="fade">
                                             <div
                                                 v-if="isOpen"
                                                 class="fixed z-20 flex items-center justify-center mt-2"
@@ -144,28 +151,68 @@ onUnmounted(() => {
                                                 <div
                                                     class="p-3 overflow-hidden bg-white rounded-lg shadow-xl dark:text-gray-200 dark:bg-gray-800"
                                                 >
-                                                    <InputLabel
-                                                        value="Category"
-                                                        class="mb-1 text-sm text-gray-700 dark:text-gray-200"
-                                                    />
-                                                    <select
-                                                        v-model="form.category"
-                                                        class="block w-full px-3 py-2 text-sm border-gray-200 rounded-md pr-9 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-                                                    >
-                                                        <option
-                                                            :value="null"
-                                                            selected
+                                                    <div>
+                                                        <InputLabel
+                                                            value="Category"
+                                                            class="mb-1 text-sm text-gray-700 dark:text-gray-200"
                                                         />
-                                                        <option
-                                                            v-for="category in props.categories"
-                                                            :key="category.id"
-                                                            :value="
-                                                                category.name
+                                                        <select
+                                                            v-model="
+                                                                form.category
                                                             "
+                                                            class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md pr-9 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
                                                         >
-                                                            {{ category.name }}
-                                                        </option>
-                                                    </select>
+                                                            <option
+                                                                :value="null"
+                                                                selected
+                                                            />
+                                                            <option
+                                                                v-for="(
+                                                                    category,
+                                                                    key
+                                                                ) in props.categories"
+                                                                :key="key"
+                                                                :value="
+                                                                    category.name
+                                                                "
+                                                            >
+                                                                {{
+                                                                    category.name
+                                                                }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <InputLabel
+                                                            value="Author"
+                                                            class="mb-1 text-sm text-gray-700 dark:text-gray-200"
+                                                        />
+                                                        <select
+                                                            v-model="
+                                                                form.author
+                                                            "
+                                                            class="block w-full px-3 py-2 text-sm border-gray-300 rounded-md pr-9 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                        >
+                                                            <option
+                                                                value=""
+                                                                selected
+                                                            />
+                                                            <option
+                                                                v-for="(
+                                                                    author, key
+                                                                ) in props.authors"
+                                                                :key="key"
+                                                                :value="
+                                                                    author.name
+                                                                "
+                                                            >
+                                                                {{
+                                                                    author.name
+                                                                }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </transition>
@@ -179,7 +226,11 @@ onUnmounted(() => {
                                         placeholder="Search by title, author, or category"
                                     />
                                     <button
-                                        v-if="form.search || form.category"
+                                        v-if="
+                                            form.search ||
+                                            form.category ||
+                                            form.author
+                                        "
                                         @click="reset()"
                                         type="button"
                                         class="p-1 transition ease-in bg-white rounded-lg dark:bg-gray-800 dark:hover:bg-gray-700"
@@ -348,3 +399,18 @@ onUnmounted(() => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+.fade-enter-to,
+.fade-leave {
+    opacity: 1;
+}
+</style>
