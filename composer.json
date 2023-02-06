@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "cviebrock/eloquent-sluggable": "^9.0",
         "guzzlehttp/guzzle": "^7.5",
+        "hammerstone/fast-paginate": "^0.1.11",
         "inertiajs/inertia-laravel": "^0.6.9",
         "laravel/framework": "^9.50.1",
         "laravel/sanctum": "^2.15.1",

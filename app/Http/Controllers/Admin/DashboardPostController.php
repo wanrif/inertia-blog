@@ -34,7 +34,7 @@ class DashboardPostController extends Controller
             'posts' => $data
             ->when(request('category') ?? null, fn ($query) => $query->whereHas('category', fn ($query) => $query->where('name', request('category'))))
             ->when(request('author') ?? null, fn ($query) => $query->whereHas('author', fn ($query) => $query->where('name', request('author'))))
-            ->paginate(5)
+            ->fastPaginate(5)
             ->withQueryString()
             ->through(fn ($post) => [
                 'id' => $post->id,

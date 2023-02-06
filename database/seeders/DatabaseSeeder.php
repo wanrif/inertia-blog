@@ -21,13 +21,13 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // \App\Models\Post::factory(25)->create();
-
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
             CategorySeeder::class,
             UserSeeder::class,
         ]);
+
+        \App\Models\Post::factory(2300)->create();
     }
 }
