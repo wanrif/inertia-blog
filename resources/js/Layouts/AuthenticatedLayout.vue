@@ -56,7 +56,7 @@ onMounted(() => {
                                     <div
                                         class="text-xl font-semibold text-indigo-500 capitalize dark:text-gray-100 sm:text-2xl"
                                     >
-                                        Wanrif
+                                        BlogifyX
                                     </div>
                                 </div>
 

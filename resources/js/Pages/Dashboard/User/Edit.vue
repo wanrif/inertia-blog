@@ -74,7 +74,7 @@ const updateUser = () => {
             <div
                 class="text-xl font-bold leading-tight text-gray-800 cursor-default dark:text-gray-200"
             >
-                <Link :href="route('users.index')">User / </Link>
+                <Link :href="route('users.index')">Users / </Link>
                 <span class="text-indigo-500">{{ props.user.name }}</span>
                 <span> / Edit</span>
             </div>
@@ -119,7 +119,8 @@ const updateUser = () => {
                                         id="name"
                                         type="text"
                                         class="block w-full mt-1 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-800"
-                                        :class="'ring-red-500' +
+                                        :class="
+                                            'ring-red-500' +
                                             (user.role !== 'super-admin'
                                                 ? ' disabled:text-gray-500 dark:disabled:text-gray-400 dark:border-gray-800 disabled:bg-gray-200 disabled:cursor-not-allowed'
                                                 : '') +
@@ -148,7 +149,8 @@ const updateUser = () => {
                                         id="email"
                                         type="text"
                                         class="block w-full mt-1 dark:text-gray-200 dark:bg-gray-700"
-                                        :class="'ring-red-500' +
+                                        :class="
+                                            'ring-red-500' +
                                             (user.role !== 'super-admin'
                                                 ? ' disabled:text-gray-500 dark:disabled:text-gray-400 dark:border-gray-800 disabled:bg-gray-200 disabled:cursor-not-allowed'
                                                 : '') +
@@ -179,8 +181,6 @@ const updateUser = () => {
                                         placeholder="Select Role"
                                         :close-on-select="true"
                                         :searchable="true"
-                                        :object="true"
-                                        :resolve-on-load="false"
                                         :options="[...options]"
                                         :classes="{
                                             container:
@@ -231,7 +231,8 @@ const updateUser = () => {
                                                 'py-2 px-3 text-gray-600 bg-white text-left',
                                             spacer: 'h-9 py-px box-content',
                                         }"
-                                        :class="'ring-red-500' +
+                                        :class="
+                                            'ring-red-500' +
                                             (form.errors.role ? ' ring-2' : '')
                                         "
                                     />

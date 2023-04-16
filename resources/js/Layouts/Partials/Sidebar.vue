@@ -119,6 +119,11 @@ onUnmounted(() => {
                 <div
                     id="dropdown-access-controll"
                     class="flex flex-col gap-2 px-6 py-4 font-semibold dark:text-gray-500 dark:hover:text-gray-300"
+                    :class="{
+                        'border-r-indigo-500 border-r-4 bg-gradient-to-r bg-indigo-50 dark:bg-indigo-900/50 from-indigo-50 to-indigo-100 dark:from-gray-800 dark:to-indigo-900':
+                            route().current('roles.*') ||
+                            route().current('permissions.*'),
+                    }"
                 >
                     <button
                         @click="isOpenAccessControll = !isOpenAccessControll"

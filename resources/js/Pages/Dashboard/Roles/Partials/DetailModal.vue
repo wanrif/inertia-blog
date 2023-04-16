@@ -94,11 +94,15 @@ onUnmounted(() => {
                         class="flex flex-col justify-between gap-2 sm:flex-row item-center"
                     >
                         <div class="text-sm">
-                            <div class="text-xs text-gray-600">Created At:</div>
+                            <div class="text-xs tracking-wider text-gray-600">
+                                Created At:
+                            </div>
                             {{ props.content.created_at }}
                         </div>
                         <div class="text-sm">
-                            <div class="text-xs text-gray-600">Updated AT:</div>
+                            <div class="text-xs tracking-wider text-gray-600">
+                                Updated At:
+                            </div>
                             {{ props.content.updated_at }}
                         </div>
                     </div>

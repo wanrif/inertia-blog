@@ -19,22 +19,21 @@ import MainLayout from "@/Layouts/MainLayout.vue";
                             class="text-3xl font-semibold tracking-wide border-b-8 text-sharbg-shark-900 dark:text-[#df4139] lg:text-4xl border-rose-600 dark:border-quill-gray-100 max-w-max flex flex-col sm:flex-row"
                         >
                             Hello,&nbsp;
-                            <span class="text-accent-2">
-                                I'm Redwan Syarif
+                            <span class="capitalize text-accent-2">
+                                its BlogifyX
                             </span>
                         </h1>
                         <p class="mt-4 text-gray-600 dark:text-quill-gray-100">
-                            I am a graduate from Gunadarma University majoring
-                            in Information Systems. I am a full-stack web
-                            developer who enjoys building web applications using
-                            Laravel and Vue.js. I also enjoy creating mobile
-                            applications using Flutter.
+                            This is a blog web application built using Laravel
+                            9, Inertiajs, Vue 3, and Tailwind CSS. It has a
+                            variety of features to make for a smooth and
+                            enjoyable user experience.
                         </p>
                         <div class="mt-6">
                             <button
                                 class="px-6 py-2.5 mt-6 text-sm font-medium leading-5 text-center bg-cyan-600 hover:bg-cyan-700 focus:ring-cyan-500 focus:ring-offset-cyan-200 text-white transition ease-in duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
                             >
-                                Hire Me Now!
+                                Write something new &rarr;
                             </button>
                         </div>
                     </div>

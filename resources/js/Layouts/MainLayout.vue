@@ -29,11 +29,11 @@ const closeMobileMenu = () => {
                 class="container flex items-center justify-between p-6 mx-auto sm:block"
             >
                 <div class="flex items-center gap-1 sm:justify-center">
-                    <ApplicationLogo class="w-8 h-8 fill-cyan-500" />
+                    <ApplicationLogo color="text-cyan-500" class="w-8 h-8" />
                     <Link
                         href="/"
                         class="text-2xl font-bold text-gray-800 font-viga dark:text-white lg:text-3xl hover:text-gray-700 dark:hover:text-gray-300"
-                        >Wanrif
+                        >BlogifyX
                     </Link>
                 </div>
 
